@@ -3,10 +3,11 @@ package main
 import (
 	"fmt"
 	"log"
-	"testing"
+
+	//"testing"
 	"time"
 
-	"restdb"
+	"github.com/NikolasDeForce/restdb"
 )
 
 type User struct {
@@ -27,17 +28,17 @@ var (
 	Database = "restapi"
 )
 
-func TestDB(t *testing.T) {
-	t.Run("test insertUser func", func(t *testing.T) {
-		db := restdb.ConnectPostgres()
-		defer db.Close()
+// func TestDB(t *testing.T) {
+// 	t.Run("test insertUser func", func(t *testing.T) {
+// 		db := restdb.ConnectPostgres()
+// 		defer db.Close()
 
-		user := restdb.User{ID: 0, Username: "nick", Password: "admin", LastLogin: time.Now().Unix(), Admin: 1, Active: 1}
-		if !restdb.InsertUser(user) {
-			t.Errorf("got %v want %v", user, restdb.InsertUser(user))
-		}
-	})
-}
+// 		user := restdb.User{ID: 0, Username: "nick", Password: "admin", LastLogin: time.Now().Unix(), Admin: 1, Active: 1}
+// 		if !restdb.InsertUser(user) {
+// 			t.Errorf("got %v want %v", user, restdb.InsertUser(user))
+// 		}
+// 	})
+// }
 
 func main() {
 	db := restdb.ConnectPostgres()

@@ -1,4 +1,4 @@
-module restdb
+module github.com/NikolasDeForce/restdb
 
 go 1.21.6
 

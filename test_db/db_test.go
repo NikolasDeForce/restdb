@@ -7,7 +7,7 @@ import (
 	//"testing"
 	"time"
 
-	"restdb"
+	"github.com/NikolasDeForce/restdb"
 )
 
 type User struct {

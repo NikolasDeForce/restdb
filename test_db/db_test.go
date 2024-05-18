@@ -6,15 +6,6 @@ import (
 	"github.com/NikolasDeForce/restdb"
 )
 
-type User struct {
-	ID        int
-	Username  string
-	Password  string
-	LastLogin int64
-	Admin     int
-	Active    int
-}
-
 // PostgreSQL Connection details
 var (
 	Hostname = "localhost"

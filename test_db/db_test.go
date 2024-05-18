@@ -1,11 +1,7 @@
 package main
 
 import (
-	"fmt"
-	"log"
-
-	//"testing"
-	"time"
+	"testing"
 
 	"github.com/NikolasDeForce/restdb"
 )
@@ -28,83 +24,58 @@ var (
 	Database = "restapi"
 )
 
-// func TestDB(t *testing.T) {
-// 	t.Run("test insertUser func", func(t *testing.T) {
-// 		db := restdb.ConnectPostgres()
-// 		defer db.Close()
+func TestDB(t *testing.T) {
+	var user = restdb.User{ID: 2, Username: "nick", Password: "admin", LastLogin: 1716000604, Admin: 1, Active: 1}
 
-// 		user := restdb.User{ID: 0, Username: "nick", Password: "admin", LastLogin: time.Now().Unix(), Admin: 1, Active: 1}
-// 		if !restdb.InsertUser(user) {
-// 			t.Errorf("got %v want %v", user, restdb.InsertUser(user))
-// 		}
-// 	})
-// }
+	t.Run("check InsetUser, should return user already exist", func(t *testing.T) {
+		db := restdb.ConnectPostgres()
+		defer db.Close()
 
-func main() {
-	db := restdb.ConnectPostgres()
-	fmt.Println(db)
-	defer db.Close()
+		got := restdb.InsertUser(user)
+		want := false
 
-	err := db.Ping()
-	if err != nil {
-		fmt.Println("Ping:", err)
-		return
-	}
-
-	t := restdb.User{}
-	fmt.Println(t)
-	rows, err := db.Query(`SELECT "username" FROM "users"`)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	defer rows.Close()
-	for rows.Next() {
-		var username string
-		err = rows.Scan(&username)
-		if err != nil {
-			fmt.Println(err)
-			return
+		if got != want {
+			t.Errorf("got %v want %v", got, want)
 		}
+	})
 
-		fmt.Println(username)
-	}
+	t.Run("find user by Username", func(t *testing.T) {
+		db := restdb.ConnectPostgres()
+		defer db.Close()
 
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+		got := restdb.FindUserUsername(user.Username)
 
-	log.Println("Populating PostgreSQL")
-	user := restdb.User{ID: 0, Username: "nick", Password: "admin", LastLogin: time.Now().Unix(), Admin: 1, Active: 1}
-	if restdb.InsertUser(user) {
-		fmt.Println("User inserted successfully.")
-	} else {
-		fmt.Println("Insert failed!")
-	}
+		if got != user {
+			t.Errorf("got %v want %v", got, user)
+		}
+	})
 
-	nickUser := restdb.FindUserUsername(user.Username)
-	fmt.Println("nick: ", nickUser)
+	t.Run("find user by ID", func(t *testing.T) {
+		db := restdb.ConnectPostgres()
+		defer db.Close()
 
-	if restdb.DeleteUser(nickUser.ID) {
-		fmt.Println("User Deleted.")
-	} else {
-		fmt.Println("User not Deleted.")
-	}
+		got := restdb.FindUserID(user.ID)
 
-	nickUser = restdb.FindUserUsername(user.Username)
-	fmt.Println("nick: ", nickUser)
+		if got != user {
+			t.Errorf("got %v want %v", got, user)
+		}
+	})
 
-	if restdb.DeleteUser(nickUser.ID) {
-		fmt.Println("User Deleted.")
-	} else {
-		fmt.Println("User not Deleted.")
-	}
+	t.Run("check user admin or not", func(t *testing.T) {
+		db := restdb.ConnectPostgres()
+		defer db.Close()
 
-	if restdb.DeleteUser(nickUser.ID) {
-		fmt.Println("User Deleted.")
-	} else {
-		fmt.Println("User not Deleted.")
-	}
+		if !restdb.IsUserAdmin(user) {
+			t.Errorf("got %v want %v", restdb.IsUserAdmin(user), true)
+		}
+	})
+
+	t.Run("check valid user or not", func(t *testing.T) {
+		db := restdb.ConnectPostgres()
+		defer db.Close()
+
+		if !restdb.IsUserValid(user) {
+			t.Errorf("got %v want %v", restdb.IsUserValid(user), true)
+		}
+	})
 }
